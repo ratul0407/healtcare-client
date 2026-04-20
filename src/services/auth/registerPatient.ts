@@ -58,8 +58,11 @@ export const registerPatient = async (
         method: "POST",
         body: newFormData,
       },
-    ).then((res) => res.json());
-    return res;
+    );
+    const result = await res.json();
+    const setCookieHeaders = res.headers.getSetCookie();
+    console.log(setCookieHeaders);
+    return result;
   } catch (error) {
     console.log(error);
     return { error: "Registration Failed" };
