@@ -3,7 +3,6 @@
 
 import z from "zod";
 import { parse } from "cookie";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import {
@@ -11,6 +10,7 @@ import {
   isValidRedirectForRole,
   UserRole,
 } from "@/lib/authUtils";
+import { setCookie } from "./tokenHandler";
 const loginValidationZodSchema = z.object({
   email: z.email({ error: "Email is required" }),
   password: z
@@ -45,6 +45,7 @@ export const loginUser = async (_currentState: any, formData: any) => {
       },
     });
 
+    const result = await res.json();
     const setCookieHeaders = res.headers.getSetCookie();
 
     if (setCookieHeaders && setCookieHeaders.length > 0) {
@@ -58,24 +59,26 @@ export const loginUser = async (_currentState: any, formData: any) => {
         }
       });
     } else {
-      throw new Error("No Set-Cookie Header Found");
+      throw new Error(
+        result?.message ||
+          `${process.env.NODE_ENV === "development" ? result?.message : "Login Failed"}`,
+      );
     }
 
     if (!accessTokenObj || !accessTokenObj["accessToken"]) {
-      throw new Error("Access Token Found");
+      throw new Error("No Access Token Found");
     }
     if (!refreshTokenObj || !refreshTokenObj["refreshToken"]) {
-      throw new Error("Refresh Token Error");
+      throw new Error("No Refresh Token Error");
     }
-    const cookieStore = await cookies();
-    cookieStore.set("accessToken", accessTokenObj.accessToken, {
+    await setCookie("accessToken", accessTokenObj.accessToken, {
       httpOnly: true,
       maxAge: parseInt(accessTokenObj["Max-Age"]),
       path: accessTokenObj["Path"] || "/",
       secure: true,
       sameSite: accessTokenObj["SameSite"] || "none",
     });
-    cookieStore.set("refreshToken", refreshTokenObj.refreshToken, {
+    await setCookie("refreshToken", refreshTokenObj.refreshToken, {
       httpOnly: true,
       maxAge: parseInt(refreshTokenObj["Max-Age"]),
       path: refreshTokenObj["Path"] || "/",
@@ -90,19 +93,24 @@ export const loginUser = async (_currentState: any, formData: any) => {
       throw new Error("Invalid token");
     }
     const userRole: UserRole = verifiedToken.role;
+    if (!result?.success) {
+      throw new Error(result?.message || "Login Failed");
+    }
     if (redirectUrl) {
       const requestedPath = String(redirectUrl);
-      if (isValidRedirectForRole(requestedPath, userRole)) {
+      if (`${isValidRedirectForRole(requestedPath, userRole)}?loggedIn=true`) {
         redirect(requestedPath);
       } else {
-        redirect(getDefaultDashboardRoute(userRole));
+        redirect(`${getDefaultDashboardRoute(userRole)}?loggedIn=true`);
       }
+    } else {
+      redirect(`${getDefaultDashboardRoute(userRole)}?loggedIn=true`);
     }
   } catch (error: any) {
     if (error?.digest?.startsWith("NEXT_REDIRECT")) {
       throw error;
     }
     console.log(error);
-    return { error: "Login Failed" };
+    return { success: false, message: error?.message || "Login Failed" };
   }
 };

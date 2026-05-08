@@ -2,6 +2,7 @@
 "use server";
 
 import z from "zod";
+import { loginUser } from "./loginUser";
 
 const registerValidationZodSchema = z
   .object({
@@ -60,10 +61,14 @@ export const registerPatient = async (
       },
     );
     const result = await res.json();
-    const setCookieHeaders = res.headers.getSetCookie();
-    console.log(setCookieHeaders);
+    if (result?.success) {
+      await loginUser(_currentState, formData);
+    }
     return result;
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.digest?.startsWith("NEXT_REDIRECT")) {
+      throw error;
+    }
     console.log(error);
     return { error: "Registration Failed" };
   }

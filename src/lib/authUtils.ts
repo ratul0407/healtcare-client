@@ -13,7 +13,7 @@ export const authRoutes = [
 ];
 
 export const commonProtectedRoutes: RouteConfig = {
-  exact: ["/dashboard", "/my-profile", "/settings"],
+  exact: ["/dashboard", "/my-profile", "/settings", "/change-password"],
   patterns: [],
 };
 
