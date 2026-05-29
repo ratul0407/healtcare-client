@@ -1,25 +1,13 @@
 import { getUserInfo } from "@/services/auth/getUserInfo";
 import DashboardSidebarContent from "./DashboardSidebarContent";
-import { getDefaultDashboardRoute } from "@/lib/authUtils";
+import { getDefaultDashboardRoute, UserRole } from "@/lib/authUtils";
 import { UserInfo } from "@/types/user.interface";
 import { NavSection } from "@/types/dashboard.interface";
+import { getNavItemsByRole } from "@/lib/navItems.config";
 
 const DashboardSidebar = async () => {
   const userInfo = (await getUserInfo()) as UserInfo;
-  const navItems = [
-    {
-      title: "Consultation",
-      items: [
-        {
-          title: "Patient",
-          href: "/patient/dashboard",
-          icon: "User",
-          description: "View patient details",
-          roles: ["PATIENT"],
-        },
-      ],
-    },
-  ];
+  const navItems = getNavItemsByRole(userInfo?.role as UserRole);
   const dashboardHome = getDefaultDashboardRoute(userInfo?.role);
   return (
     <DashboardSidebarContent

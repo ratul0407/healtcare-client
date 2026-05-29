@@ -9,30 +9,34 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import DashboardMobileSidebar from "./DashboardMobileSidebar";
 import { getDefaultDashboardRoute, UserRole } from "@/lib/authUtils";
 import { NavSection } from "@/types/dashboard.interface";
+import { useEffect, useState } from "react";
 
 interface DashboardNavbarContentProps {
   userInfo: UserInfo | null;
+  navItems: NavSection[];
 }
-const DashboardNavbarContent = ({ userInfo }: DashboardNavbarContentProps) => {
-  const navItems = [
-    {
-      title: "Consultation",
-      items: [
-        {
-          title: "Patient",
-          href: "/patient/dashboard",
-          icon: "User",
-          description: "View patient details",
-          roles: ["PATIENT"],
-        },
-      ],
-    },
-  ];
+const DashboardNavbarContent = ({
+  userInfo,
+  navItems,
+}: DashboardNavbarContentProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkSmallScreen = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkSmallScreen();
+    window.addEventListener("resize", checkSmallScreen);
+    return () => {
+      window.removeEventListener("resize", checkSmallScreen);
+    };
+  }, []);
   const dashboardHome = getDefaultDashboardRoute(userInfo?.role as UserRole);
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur">
       <div className="flex h-16 items-center justify-between gap-4 px-4 md:px-6 ">
-        <Sheet>
+        <Sheet open={isMobile && isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
             <Button variant={"outline"} size={"icon"}>
               <Menu className="size-5" />
