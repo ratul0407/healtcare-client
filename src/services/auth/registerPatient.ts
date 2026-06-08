@@ -3,6 +3,8 @@
 
 import z from "zod";
 import { loginUser } from "./loginUser";
+import { serverFetch } from "@/lib/server-fetch";
+import { zodValidator } from "@/lib/zodValidator";
 
 const registerValidationZodSchema = z
   .object({
@@ -27,36 +29,37 @@ export const registerPatient = async (
   formData: any,
 ): Promise<any> => {
   try {
-    const registerData = {
-      password: formData.get("password"),
-      patient: {
-        name: formData.get("name"),
-        address: formData.get("address"),
-        email: formData.get("email"),
-      },
-    };
-    const validatedFields = registerValidationZodSchema.safeParse({
+    const payload = {
       name: formData.get("name"),
       address: formData.get("address"),
       email: formData.get("email"),
       password: formData.get("password"),
       confirmPassword: formData.get("confirmPassword"),
-    });
-    if (!validatedFields.success) {
-      return {
-        success: false,
-        errors: validatedFields.error.issues.map((issue) => ({
-          path: issue.path[0],
-          message: issue.message,
-        })),
-      };
+    };
+
+    if (zodValidator(payload, registerValidationZodSchema).success === false) {
+      return zodValidator(payload, registerValidationZodSchema);
     }
+    const validatedPayload: any = zodValidator(
+      payload,
+      registerValidationZodSchema,
+    ).data;
+    const registerData = {
+      password: validatedPayload.password,
+      patient: {
+        name: validatedPayload("name"),
+        address: validatedPayload("address"),
+        email: validatedPayload("email"),
+      },
+    };
     const newFormData = new FormData();
+    if (formData.get("file")) {
+      newFormData.append("file", formData.get("file") as Blob);
+    }
     newFormData.append("data", JSON.stringify(registerData));
-    const res = await fetch(
+    const res = await serverFetch.post(
       "http://localhost:9000/api/v1/user/create-patient",
       {
-        method: "POST",
         body: newFormData,
       },
     );
@@ -69,7 +72,6 @@ export const registerPatient = async (
     if (error?.digest?.startsWith("NEXT_REDIRECT")) {
       throw error;
     }
-    console.log(error);
     return { error: "Registration Failed" };
   }
 };

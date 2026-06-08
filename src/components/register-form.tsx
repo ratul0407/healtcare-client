@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useActionState, useEffect } from "react";
 import { Button } from "./ui/button";
@@ -7,17 +6,10 @@ import { Field, FieldDescription, FieldGroup, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
 import { registerPatient } from "@/services/auth/registerPatient";
 import { toast } from "sonner";
+import InputFieldError from "./shared/InputFieldError";
 
 const RegisterForm = () => {
   const [state, formAction, isPending] = useActionState(registerPatient, null);
-  const getFieldError = (fieldName: string) => {
-    if (state && state.errors) {
-      const error = state.errors.find((error: any) => error.path === fieldName);
-      return error?.message;
-    } else {
-      return null;
-    }
-  };
   useEffect(() => {
     if (state && !state.success) {
       if (state.message) {
@@ -33,11 +25,7 @@ const RegisterForm = () => {
             <Field>
               <FieldLabel htmlFor="name"> Full Name</FieldLabel>
               <Input id="name" name="name" type="text" placeholder="John doe" />
-              {getFieldError("name") && (
-                <FieldDescription className="text-red-500">
-                  {getFieldError("name")}
-                </FieldDescription>
-              )}
+              <InputFieldError field="name" state={state} />
             </Field>
             <Field>
               <FieldLabel htmlFor="address">Address</FieldLabel>
@@ -47,20 +35,12 @@ const RegisterForm = () => {
                 type="text"
                 placeholder="Address"
               />
-              {getFieldError("address") && (
-                <FieldDescription className="text-red-500">
-                  {getFieldError("address")}
-                </FieldDescription>
-              )}
+              <InputFieldError field="address" state={state} />
             </Field>
             <Field>
               <FieldLabel htmlFor="email">Email</FieldLabel>
               <Input id="email" name="email" type="email" placeholder="Email" />
-              {getFieldError("email") && (
-                <FieldDescription className="text-red-500">
-                  {getFieldError("email")}
-                </FieldDescription>
-              )}
+              <InputFieldError field="email" state={state} />
             </Field>
             <Field>
               <FieldLabel htmlFor="password">Password</FieldLabel>
@@ -70,11 +50,7 @@ const RegisterForm = () => {
                 type="password"
                 placeholder="Password"
               />
-              {getFieldError("password") && (
-                <FieldDescription className="text-red-500">
-                  {getFieldError("password")}
-                </FieldDescription>
-              )}
+              <InputFieldError field="password" state={state} />
             </Field>
             <Field>
               <FieldLabel htmlFor="confirmPassword">
@@ -86,11 +62,7 @@ const RegisterForm = () => {
                 type="password"
                 placeholder="Confirm Password"
               />
-              {getFieldError("confirmPassword") && (
-                <FieldDescription className="text-red-500">
-                  {getFieldError("confirmPassword")}
-                </FieldDescription>
-              )}
+              <InputFieldError field="confirmPassword" state={state} />
             </Field>
           </div>
           <FieldGroup className="mt-4">

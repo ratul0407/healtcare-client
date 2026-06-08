@@ -1,4 +1,3 @@
-"use server";
 import { getCookie } from "@/services/auth/tokenHandler";
 
 const BACKEND_API_URL =

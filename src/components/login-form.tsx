@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useActionState, useEffect } from "react";
 import { Button } from "./ui/button";
@@ -7,21 +6,12 @@ import { Field, FieldDescription, FieldGroup, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
 import { loginUser } from "@/services/auth/loginUser";
 import { toast } from "sonner";
+import InputFieldError from "./shared/InputFieldError";
 
 const LoginForm = ({ redirect }: { redirect?: string }) => {
   const [state, formAction, isPending] = useActionState(loginUser, null);
-  console.log(state);
-  const getFieldError = (fieldName: string) => {
-    if (state && state.errors) {
-      const error = state.errors.find((error: any) => error.path === fieldName);
-      return error?.message;
-    } else {
-      return null;
-    }
-  };
-
   useEffect(() => {
-    if (state && !state.success) {
+    if (state && !state.success && state.message) {
       if (state.message) {
         toast.error(state.message);
       }
@@ -40,11 +30,7 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
               type="email"
               placeholder="Enter your email"
             />
-            {getFieldError("email") && (
-              <FieldDescription className="text-red-500">
-                {getFieldError("email")}
-              </FieldDescription>
-            )}
+            <InputFieldError field="email" state={state} />
           </Field>
           <Field>
             <FieldLabel htmlFor="password">Password</FieldLabel>
@@ -54,11 +40,7 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
               type="password"
               placeholder="Enter your password"
             />
-            {getFieldError("password") && (
-              <FieldDescription className="text-red-500">
-                {getFieldError("password")}
-              </FieldDescription>
-            )}
+            <InputFieldError field="email" state={state} />
           </Field>
         </div>
         <FieldGroup className="mt-4">
