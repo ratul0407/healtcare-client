@@ -96,12 +96,60 @@ export const doctorNavItems: NavSection[] = [
     ],
   },
 ];
+export const AdminNavItems: NavSection[] = [
+  {
+    title: "User Management",
+    items: [
+      {
+        title: "Admins",
+        href: "/admin/dashboard/admins",
+        icon: "Shield",
+        roles: ["ADMIN"],
+      },
+      {
+        title: "Doctors",
+        href: "/admin/dashboard/doctors",
+        icon: "sStethoscope",
+        roles: ["ADMIN"],
+      },
+      {
+        title: "Patients",
+        href: "/admin/dashboard/patients",
+        icon: "Users",
+        roles: ["ADMIN"],
+      },
+    ],
+  },
+  {
+    title: "Hospital Management",
+    items: [
+      {
+        title: "Appointments",
+        href: "/admin/dashboard/appointments",
+        icon: "Calendar",
+        roles: ["ADMIN"],
+      },
+      {
+        title: "Schedules",
+        href: "/admin/dashboard/schedules",
+        icon: "Calender",
+        roles: ["ADMIN"],
+      },
+      {
+        title: "Specialties",
+        href: "/admin/dashboard/specialties-management",
+        icon: "Box",
+        roles: ["ADMIN"],
+      },
+    ],
+  },
+];
 
 export const getNavItemsByRole = (role: UserRole): NavSection[] => {
   const commonNavItems = getCommonNavItems(role);
   switch (role) {
     case "ADMIN":
-      return [...commonNavItems];
+      return [...commonNavItems, ...AdminNavItems];
     case "DOCTOR":
       return [...commonNavItems, ...doctorNavItems];
     case "PATIENT":
