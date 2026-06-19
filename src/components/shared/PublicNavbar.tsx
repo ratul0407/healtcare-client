@@ -14,7 +14,6 @@ const PublicNavbar = async () => {
     { href: "#", label: "NGOs" },
   ];
   const accessToken = await getCookie("accessToken");
-  console.log(accessToken);
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur  dark:bg-background/95">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">

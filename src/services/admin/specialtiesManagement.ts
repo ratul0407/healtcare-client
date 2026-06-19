@@ -46,10 +46,11 @@ export async function getSpecialties() {
   }
 }
 
-export async function deleteSpecialtyById(id: number) {
+export async function deleteSpecialtyById(id: string) {
   try {
     const response = await serverFetch.delete(`/specialties/${id}`);
     const result = await response.json();
+    console.log(result);
     return result;
   } catch (error: any) {
     return {

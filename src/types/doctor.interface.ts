@@ -1,7 +1,5 @@
-import { ISpecialty } from "./specialty.interface";
-
 export interface IDoctor {
-  id: string;
+  id?: string;
   name: string;
   email: string;
   password: string;
@@ -16,8 +14,14 @@ export interface IDoctor {
   designation: string;
   profilePhoto?: string;
   isDeleted?: boolean;
-  averageRating: number;
-  createdAt: string;
-  updatedAt: string;
-  doctorSpecialties: ISpecialty[];
+  averageRating?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  doctorSpecialties?: Array<{
+    specialty?: {
+      id: string;
+      title: string;
+      icon?: string;
+    };
+  }>;
 }
