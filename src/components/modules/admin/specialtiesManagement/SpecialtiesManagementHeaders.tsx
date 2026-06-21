@@ -1,7 +1,6 @@
 "use client";
 
 import ManagementPageHeader from "@/components/shared/ManagementPageHeader";
-import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useState, useTransition } from "react";
 import SpecialtiesFormDialog from "./SpecialtiesFormDialog";

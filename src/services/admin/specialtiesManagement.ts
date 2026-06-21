@@ -12,6 +12,7 @@ export async function createSpecialty(_prevState: unknown, formData: FormData) {
       return zodValidator(payload, createSpecialtyZodSchema);
     }
     const validatePayload = zodValidator(payload, createSpecialtyZodSchema);
+    console.log(validatePayload);
     const newFormData = new FormData();
     newFormData.append("data", JSON.stringify(validatePayload.data));
     if (formData.get("file")) {
@@ -21,7 +22,8 @@ export async function createSpecialty(_prevState: unknown, formData: FormData) {
     const response = await serverFetch.post("/specialties", {
       body: newFormData,
     });
-    const result = (await response).json();
+    const result = await response.json();
+    console.log(result);
     return result;
   } catch (error) {
     console.error(error);
