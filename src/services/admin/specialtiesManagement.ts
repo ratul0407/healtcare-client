@@ -12,7 +12,6 @@ export async function createSpecialty(_prevState: unknown, formData: FormData) {
       return zodValidator(payload, createSpecialtyZodSchema);
     }
     const validatePayload = zodValidator(payload, createSpecialtyZodSchema);
-    console.log(validatePayload);
     const newFormData = new FormData();
     newFormData.append("data", JSON.stringify(validatePayload.data));
     if (formData.get("file")) {
@@ -23,7 +22,6 @@ export async function createSpecialty(_prevState: unknown, formData: FormData) {
       body: newFormData,
     });
     const result = await response.json();
-    console.log(result);
     return result;
   } catch (error) {
     console.error(error);
@@ -52,7 +50,6 @@ export async function deleteSpecialtyById(id: string) {
   try {
     const response = await serverFetch.delete(`/specialties/${id}`);
     const result = await response.json();
-    console.log(result);
     return result;
   } catch (error: any) {
     return {

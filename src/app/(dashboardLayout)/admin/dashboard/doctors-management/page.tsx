@@ -12,10 +12,9 @@ import { Suspense } from "react";
 const DoctorsManagementPage = async () => {
   const specialtiesResult = await getSpecialties();
   const doctorResult = await getDoctors();
-  console.log(doctorResult);
   return (
     <div className="space-y-6">
-      <DoctorsManagementHeader />
+      <DoctorsManagementHeader specialties={specialtiesResult.data} />
       <div className="flex space-x-2">
         <RefreshButton />
         <SearchFilter paramName="searchTerm" placeholder="Search for doctors" />

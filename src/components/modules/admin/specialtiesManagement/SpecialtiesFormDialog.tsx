@@ -24,7 +24,6 @@ const SpecialtiesFormDialog = ({
   onSuccess,
 }: SpecialtiesFormDialogProps) => {
   const [state, formAction, pending] = useActionState(createSpecialty, null);
-  console.log(state, "from line 27");
   useEffect(() => {
     if (state && state?.success) {
       toast.success(state.message);
